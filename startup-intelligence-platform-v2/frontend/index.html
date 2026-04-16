@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Startup Intelligence Platform — Pro Edition v2</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"
+          onerror="this.onerror=null;this.src='chart.min.js'"></script>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+<div class="app">
+
+  <!-- HEADER -->
+  <div class="header fade-in">
+    <div class="header-top">
+      <div class="badge"><span class="dot"></span> PRO v2 · ML ENGINE · CLAUDE AI · FASTAPI · CHARTS</div>
+      <div class="header-actions">
+        <!-- Backend Status Indicator -->
+        <div class="backend-status" id="backend-status" title="FastAPI backend connection">
+          <span class="backend-dot" id="backend-dot"></span>
+          <span class="backend-lbl" id="backend-lbl">CONNECTING</span>
+        </div>
+        <!-- Theme Toggle -->
+        <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
+          <span id="theme-ico">☀️</span>
+        </button>
+        <button class="btn-hist" onclick="toggleHist()">📋 History (<span id="hcnt">0</span>)</button>
+        <div class="mode-wrap">
+          <span class="mode-lbl">🚀 Startup</span>
+          <div class="toggle" id="modetog" onclick="toggleMode()"><div class="knob" id="knob"></div></div>
+          <span class="mode-lbl">🍜 Street</span>
+        </div>
+      </div>
+    </div>
+    <div class="logo-wrap">
+      <svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <polygon points="32,3 58,17.5 58,46.5 32,61 6,46.5 6,17.5" fill="rgba(245,158,11,0.07)" stroke="#f59e0b" stroke-width="1.4"/>
+        <polygon points="32,10 51,20.5 51,43.5 32,54 13,43.5 13,20.5" fill="none" stroke="rgba(245,158,11,0.18)" stroke-width="0.8"/>
+        <circle cx="32" cy="3"  r="2.2" fill="#f59e0b" opacity="0.5"/>
+        <circle cx="58" cy="17.5" r="2.2" fill="#f59e0b" opacity="0.35"/>
+        <circle cx="58" cy="46.5" r="2.2" fill="#f59e0b" opacity="0.35"/>
+        <circle cx="32" cy="61"  r="2.2" fill="#f59e0b" opacity="0.5"/>
+        <circle cx="6"  cy="46.5" r="2.2" fill="#f59e0b" opacity="0.35"/>
+        <circle cx="6"  cy="17.5" r="2.2" fill="#f59e0b" opacity="0.35"/>
+        <rect x="17" y="39" width="5" height="8"  rx="1.2" fill="#f59e0b" opacity="0.38"/>
+        <rect x="24" y="33" width="5" height="14" rx="1.2" fill="#f59e0b" opacity="0.58"/>
+        <rect x="31" y="26" width="5" height="21" rx="1.2" fill="#f59e0b" opacity="0.78"/>
+        <rect x="38" y="19" width="5" height="28" rx="1.2" fill="#fbbf24" opacity="0.92"/>
+        <polyline points="19.5,38 26.5,32 33.5,25 40.5,18" stroke="#fbbf24" stroke-width="1.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+        <polygon points="40.5,12 44,19 37,19" fill="#fbbf24"/>
+        <line x1="40.5" y1="19" x2="40.5" y2="23" stroke="#fbbf24" stroke-width="1.2" stroke-linecap="round"/>
+        <circle cx="40.5" cy="11.5" r="1.8" fill="#fff" opacity="0.55"/>
+      </svg>
+    </div>
+    <h1 id="mtitle">Startup Intelligence <span id="mspan">Platform</span></h1>
+    <p class="subtitle" id="msubtitle">ML-adaptive scoring engine + Claude AI deep analysis. FastAPI backend + offline fallback. From SaaS startups to street food stalls.</p>
+  </div>
+
+  <!-- HISTORY PANEL -->
+  <div id="hpanel" class="hist-panel hidden">
+    <div class="hist-hdr">
+      <span class="hist-title">📋 ANALYSIS HISTORY</span>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button class="btn-sm btn-exp-all" onclick="exportAll()">⬇ Export JSON</button>
+        <button class="btn-sm btn-danger" onclick="clearHist()">🗑 Clear</button>
+        <button class="btn-sm" onclick="toggleHist()">✕</button>
+      </div>
+    </div>
+    <div id="hlist"></div>
+  </div>
+
+  <!-- FORM VIEW -->
+  <div id="fv">
+
+    <!-- BUSINESS TYPE -->
+    <div class="card fade-in">
+      <div class="sec-title">🏢 Business Type</div>
+      <div class="biz-grid" id="bizgrid">
+        <div class="biz-tile" data-v="Tech Startup"   onclick="selBiz(this)">🖥️<span>Tech Startup</span></div>
+        <div class="biz-tile" data-v="SaaS"           onclick="selBiz(this)">☁️<span>SaaS</span></div>
+        <div class="biz-tile" data-v="E-Commerce"     onclick="selBiz(this)">🛒<span>E-Commerce</span></div>
+        <div class="biz-tile" data-v="Service"        onclick="selBiz(this)">🛠️<span>Service</span></div>
+        <div class="biz-tile" data-v="Local Shop"     onclick="selBiz(this)">🏪<span>Local Shop</span></div>
+        <div class="biz-tile street-tile" data-v="Street Food" onclick="selBiz(this)">🍜<span>Street Food</span></div>
+        <div class="biz-tile" data-v="Franchise"      onclick="selBiz(this)">🤝<span>Franchise</span></div>
+        <div class="biz-tile" data-v="Manufacturing"  onclick="selBiz(this)">🏭<span>Mfg.</span></div>
+      </div>
+      <input type="hidden" id="biz-type"/>
+      <!-- Street Food Fields -->
+      <div id="sf-fields" class="sf-block hidden">
+        <div class="sf-banner">🍜 Street Food Mode Unlocked — Special Parameters Active</div>
+        <div class="form-grid">
+          <div class="fg"><label>Food Type</label><select id="food-type"><option value="">Select</option><option>Pani Puri / Gol Gappa</option><option>Vada Pav</option><option>Chaat</option><option>Chinese (Noodles/Momos)</option><option>Juice / Shakes</option><option>Chai / Tea</option><option>Sandwich / Burger</option><option>Dosa / South Indian</option><option>Biryani / Rice</option><option>Rolls / Wraps</option><option>Ice Cream / Kulfi</option><option>Bhel / Sev Puri</option><option>Other Street Food</option></select></div>
+          <div class="fg"><label>Stall Type</label><select id="stall-type"><option value="">Select</option><option>Hand Cart (Mobile)</option><option>Permanent Shop</option><option>Temporary Stall</option><option>Food Truck</option><option>Home-based Delivery</option></select></div>
+          <div class="fg"><label>Daily Customers</label><input type="number" id="daily-cust" placeholder="e.g. 150"/></div>
+          <div class="fg"><label>Avg Price/Item (₹)</label><input type="number" id="avg-price" placeholder="e.g. 30"/></div>
+          <div class="fg"><label>Peak Hours</label><select id="peak-hrs"><option value="">Select</option><option>Morning (6am–10am)</option><option>Afternoon (12pm–3pm)</option><option>Evening (4pm–8pm)</option><option>Night (8pm–12am)</option><option>All Day</option><option>Morning + Evening</option></select></div>
+          <div class="fg"><label>Hygiene Level</label><select id="hygiene"><option value="">Select</option><option>Basic</option><option>Moderate</option><option>High</option></select></div>
+          <div class="fg"><label>Repeat Customer Rate (%)</label><input type="number" id="repeat-rate" placeholder="e.g. 60" min="0" max="100"/></div>
+          <div class="fg"><label>Taste Rating (1–10)</label><input type="number" id="taste-rating" placeholder="e.g. 8" min="1" max="10"/></div>
+          <div class="fg"><label>Daily Waste (%)</label><input type="number" id="daily-waste" placeholder="e.g. 10" min="0" max="100"/></div>
+          <div class="fg"><label>RM Cost Variability</label><select id="rm-var"><option value="">Select</option><option>Stable (vegetable / grain based)</option><option>Moderate (mixed ingredients)</option><option>High (seasonal / imported)</option></select></div>
+          <div class="fg"><label>License (Street)</label><select id="license-st"><option value="">Select</option><option>Licensed (FSSAI + Municipal)</option><option>Partial License</option><option>No License</option><option>In Process</option></select></div>
+          <div class="fg"><label>Police / Municipal Risk</label><select id="police-risk"><option value="">Select</option><option>No Risk (licensed, indoor)</option><option>Low Risk</option><option>Medium (occasional checks)</option><option>High (unlicensed, outdoor)</option></select></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- LOCATION -->
+    <div class="card fade-in" style="animation-delay:.04s">
+      <div class="sec-title">📍 Location & Geography</div>
+      <div class="form-grid">
+        <div class="fg"><label>City</label><input type="text" id="city" placeholder="e.g. Mumbai"/></div>
+        <div class="fg"><label>State</label><input type="text" id="state" placeholder="e.g. Maharashtra"/></div>
+        <div class="fg"><label>Area / Locality</label><input type="text" id="area" placeholder="e.g. Dadar West"/></div>
+        <div class="fg"><label>Footfall Density</label><select id="footfall"><option value="">Select</option><option>Low (residential / quiet)</option><option>Medium (mixed area)</option><option>High (market / station)</option><option>Very High (prime location)</option></select></div>
+        <div class="fg"><label>Nearby Landmarks</label><select id="landmarks"><option value="">Select</option><option>Railway Station</option><option>College / University</option><option>Office Hub / IT Park</option><option>Shopping Mall</option><option>Hospital</option><option>School</option><option>Market / Bazaar</option><option>Multiple Landmarks</option></select></div>
+        <div class="fg"><label>Monthly Rent (₹)</label><input type="number" id="rent" placeholder="e.g. 15000"/></div>
+        <div class="fg"><label>Area Competition</label><select id="area-comp"><option value="">Select</option><option>None — first in area</option><option>Low (1–3 competitors)</option><option>Medium (4–10 competitors)</option><option>High (10+ competitors)</option><option>Saturated</option></select></div>
+        <div class="fg"><label>Distance from Station</label><select id="dist-sta"><option value="">Select</option><option>Under 100m (walking distance)</option><option>100m – 500m</option><option>500m – 2km</option><option>2km+</option></select></div>
+        <div class="fg"><label>Distance from College</label><select id="dist-col"><option value="">Select</option><option>Under 100m</option><option>100m – 500m</option><option>500m – 2km</option><option>2km+</option></select></div>
+        <div class="fg"><label>Dominant Crowd Type</label><select id="crowd-type"><option value="">Select</option><option>Students</option><option>Office / Corporate Workers</option><option>Families & Residents</option><option>Tourists</option><option>Daily Wage Workers</option><option>Mixed</option></select></div>
+      </div>
+    </div>
+
+    <!-- FOUNDER & TEAM -->
+    <div class="card fade-in" style="animation-delay:.08s">
+      <div class="sec-title">👤 Founder & Team</div>
+      <div class="form-grid">
+        <div class="fg"><label>Business Name</label><input type="text" id="sname" placeholder="e.g. NovaPay / Sharma Vada Pav"/></div>
+        <div class="fg"><label>Industry / Sector</label><select id="industry"><option value="">Select</option><option>FinTech</option><option>HealthTech</option><option>EdTech</option><option>SaaS / B2B Software</option><option>E-Commerce</option><option>AI / ML</option><option>CleanTech</option><option>Consumer App</option><option>Logistics / Supply Chain</option><option>BioTech</option><option>Cybersecurity</option><option>Web3 / Crypto</option><option>Food & Beverage</option><option>Retail</option><option>Other</option></select></div>
+        <div class="fg"><label>Founder Experience</label><select id="fexp"><option value="">Select</option><option>First-time founder</option><option>1 previous venture (failed)</option><option>1 previous venture (exited)</option><option>Serial entrepreneur (2+ ventures)</option><option>Ex-FAANG / Big Tech exec</option><option>Domain expert (10+ years)</option><option>Family business background</option></select></div>
+        <div class="fg"><label>Team Size</label><select id="tsize"><option value="">Select</option><option>1 (solo founder)</option><option>2–5</option><option>6–15</option><option>16–50</option><option>50+</option></select></div>
+        <div class="fg"><label>Target Audience</label><select id="target-audience"><option value="">Select</option><option>Students</option><option>Office Workers / Professionals</option><option>Families</option><option>Tourists</option><option>Daily Wage Workers</option><option>Businesses (B2B)</option><option>Mixed / General Public</option></select></div>
+        <div class="fg"><label>Buying Frequency</label><select id="buy-freq"><option value="">Select</option><option>Multiple times a day</option><option>Daily</option><option>2–3 times a week</option><option>Weekly</option><option>Monthly</option><option>One-time / Occasional</option></select></div>
+      </div>
+    </div>
+
+    <!-- REVENUE & FUNDING -->
+    <div class="card fade-in" style="animation-delay:.12s">
+      <div class="sec-title">💰 Revenue & Funding</div>
+      <div class="form-grid">
+        <div class="fg"><label>Revenue Stage</label><select id="rev"><option value="">Select</option><option>No revenue yet</option><option>First customers / Beta</option><option>₹0–₹50K/month</option><option>₹50K–₹2L/month</option><option>₹2L–₹10L/month</option><option>₹10L+/month</option></select></div>
+        <div class="fg"><label>Product Stage</label><select id="pstage"><option value="">Select</option><option>Idea only</option><option>Building / In development</option><option>Launched (basic)</option><option>Product-market fit found</option><option>Scaling</option></select></div>
+        <div class="fg"><label>Funding Stage</label><select id="fstage"><option value="">Select</option><option>Self-funded / Bootstrapped</option><option>Family & Friends</option><option>Pre-seed</option><option>Seed</option><option>Series A</option><option>Series B</option><option>Series C+</option></select></div>
+        <div class="fg"><label>Capital Invested</label><select id="famt"><option value="">Select</option><option>Under ₹50K</option><option>₹50K – ₹2L</option><option>₹2L – ₹10L</option><option>₹10L – ₹50L</option><option>₹50L – ₹1Cr</option><option>₹1Cr+</option></select></div>
+        <div class="fg"><label>Market Size (TAM)</label><select id="msize"><option value="">Select</option><option>Hyper Local (1 area)</option><option>City Level</option><option>State Level</option><option>National (India)</option><option>International</option></select></div>
+        <div class="fg"><label>Daily Revenue (₹)</label><input type="number" id="d-rev" placeholder="e.g. 2500"/></div>
+        <div class="fg"><label>Monthly Revenue (₹)</label><input type="number" id="m-rev" placeholder="e.g. 75000"/></div>
+        <div class="fg"><label>Profit Margin (%)</label><input type="number" id="margin" placeholder="e.g. 55" min="0" max="100"/></div>
+        <div class="fg"><label>Monthly Growth Rate (%)</label><input type="number" id="g-rate" placeholder="e.g. 15"/></div>
+        <div class="fg"><label>Cost per Unit (₹)</label><input type="number" id="cost-unit" placeholder="e.g. 15"/></div>
+        <div class="fg"><label>Selling Price (₹)</label><input type="number" id="sell-price" placeholder="e.g. 40"/></div>
+        <div class="fg"><label>Break-even</label><select id="breakeven"><option value="">Select</option><option>Already profitable</option><option>Under 1 month</option><option>1–3 months</option><option>3–6 months</option><option>6–12 months</option><option>1–2 years</option><option>2+ years</option></select></div>
+      </div>
+    </div>
+
+    <!-- MARKET & COMPETITION -->
+    <div class="card fade-in" style="animation-delay:.16s">
+      <div class="sec-title">⚔️ Market & Competition</div>
+      <div class="form-grid">
+        <div class="fg"><label>Market Saturation</label><select id="comp"><option value="">Select</option><option>Blue ocean (no direct competitors)</option><option>Few niche competitors</option><option>Moderate — established players</option><option>Highly competitive — giants present</option><option>Saturated market</option></select></div>
+        <div class="fg"><label>Trend Score</label><select id="trend"><option value="">Select</option><option>Dying / Declining</option><option>Stable / Flat</option><option>Growing steadily</option><option>Trending (popular now)</option><option>Viral / Explosive growth</option></select></div>
+        <div class="fg"><label>Seasonal Impact</label><select id="seasonal"><option value="">Select</option><option>None (year-round stable)</option><option>Mild seasonal variation</option><option>Moderate (summer/winter effect)</option><option>High (monsoon/festival heavy)</option><option>Extreme (only 3–4 months busy)</option></select></div>
+        <div class="fg"><label>Weather Dependency</label><select id="weather"><option value="">Select</option><option>None (indoor/digital)</option><option>Low</option><option>Medium (outdoor, some impact)</option><option>High (rain stops business)</option></select></div>
+        <div class="fg"><label>Expansion Model</label><select id="expansion"><option value="">Select</option><option>Franchise Model</option><option>Own Multiple Outlets</option><option>Online Scaling</option><option>Wholesale / B2B Supply</option><option>No expansion planned</option></select></div>
+        <div class="fg"><label>Differentiation</label><select id="diff"><option value="">Select</option><option>Price (cheapest in area)</option><option>Quality / Taste</option><option>Speed / Convenience</option><option>Location Advantage</option><option>Unique Product / Recipe</option><option>Brand / Trust</option><option>Technology / Innovation</option><option>No clear differentiation</option></select></div>
+      </div>
+    </div>
+
+    <!-- RISK & DIGITAL -->
+    <div class="card fade-in" style="animation-delay:.20s">
+      <div class="sec-title">⚠️ Risk & Digital</div>
+      <div class="form-grid">
+        <div class="fg"><label>Legal License</label><select id="license"><option value="">Select</option><option>Fully Licensed (all docs)</option><option>Partially Licensed</option><option>No License</option><option>In Process</option></select></div>
+        <div class="fg"><label>Police / Municipal Risk</label><select id="police"><option value="">Select</option><option>No Risk (licensed, indoor)</option><option>Low Risk</option><option>Medium (occasional checks)</option><option>High (unlicensed, outdoor)</option></select></div>
+        <div class="fg"><label>Online Presence</label><select id="online"><option value="">Select</option><option>Yes — Active website + social</option><option>Yes — Social media only</option><option>Minimal (just WhatsApp)</option><option>No online presence</option></select></div>
+        <div class="fg"><label>Swiggy / Zomato Listed</label><select id="aggr"><option value="">Select</option><option>Yes — Both platforms</option><option>Yes — One platform</option><option>No — Plan to list</option><option>No — Not applicable</option></select></div>
+        <div class="fg"><label>Marketing Strategy</label><select id="marketing"><option value="">Select</option><option>Word of mouth only</option><option>Social media (organic)</option><option>Paid ads (Google/Meta)</option><option>Influencer / Content marketing</option><option>No active marketing</option></select></div>
+        <div class="fg"><label>Monthly Ad Spend (₹)</label><input type="number" id="ad-spend" placeholder="e.g. 5000"/></div>
+        <div class="fg"><label>Time in Business</label><select id="biz-age"><option value="">Select</option><option>Not started yet</option><option>Under 3 months</option><option>3–12 months</option><option>1–3 years</option><option>3–5 years</option><option>5+ years</option></select></div>
+        <div class="fg"><label>No. of Employees</label><input type="number" id="employees" placeholder="e.g. 3"/></div>
+      </div>
+    </div>
+
+    <!-- DESCRIPTION -->
+    <div class="card fade-in" style="animation-delay:.24s">
+      <div class="sec-title">📝 Business Description</div>
+      <p class="desc-hint">
+        ✨ <strong>AI-Powered</strong> — Describe your business in your own words.
+        The engine reads this along with all your form data to generate fully personalised analysis.
+        Connects to FastAPI backend first; falls back to Claude API; then offline engine — always works.
+      </p>
+      <div class="fg full">
+        <label>What does your business do — USP, biggest challenge, and 12-month goal</label>
+        <textarea id="description" rows="5" placeholder="e.g. I run a Vada Pav stall near Dadar station, Mumbai. We serve 200+ office workers daily at ₹15 using a secret recipe. My challenge is 60% revenue drop on rainy days. Goal: list on Swiggy and open a second stall near Andheri station within 12 months."></textarea>
+      </div>
+    </div>
+
+    <!-- ANALYZE BUTTON -->
+    <div class="btn-wrap fade-in">
+      <button class="btn btn-primary" id="abtn" onclick="runAnalysis()">
+        <span id="bico">▶</span> <span id="btxt">ANALYZE & PREDICT</span>
+      </button>
+    </div>
+
+  </div><!-- /#fv -->
+
+  <!-- LOADING -->
+  <div id="lv" class="hidden">
+    <div class="card">
+      <div class="loading">
+        <div class="spinner"></div>
+        <div class="loading-content">
+          <div class="loading-text" id="lmsg">RUNNING ML ENGINE</div>
+          <div class="progress-bar"><div class="progress-fill" id="progfill"></div></div>
+          <div class="loading-sub" id="lsub">Analyzing signals...</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RESULT VIEW -->
+  <div id="rv" class="hidden"></div>
+
+  <footer>
+    STARTUP INTELLIGENCE PLATFORM — PRO EDITION v2 &nbsp;·&nbsp;
+    ML ENGINE &nbsp;·&nbsp; CLAUDE AI &nbsp;·&nbsp; FASTAPI BACKEND &nbsp;·&nbsp; CHARTS
+  </footer>
+
+</div><!-- /.app -->
+
+<script src="script.js"></script>
+</body>
+</html>
